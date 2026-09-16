@@ -530,6 +530,95 @@ ${ata.conteudo}
       select.appendChild(option);
     });
   }
+
+  function registrarDespesa() {
+    const descricao = document.getElementById('despesaDescricaoInput').value.trim();
+    const valor = parseFloat(document.getElementById('despesaValorInput').value);
+    const data = document.getElementById('despesaDataInput').value;
+    const arquivo = document.getElementById('despesaArquivoInput').files[0];
+    
+    if (!descricao || !valor || !data) {
+      alert('Por favor, preencha descrição, valor e data');
+      return;
+    }
+    
+    let nomeArquivo = null;
+    let conteudoArquivo = null;
+    
+    if (arquivo) {
+      nomeArquivo = arquivo.name;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        conteudoArquivo = e.target.result;
+        const despesa = {
+          descricao,
+          valor,
+          data,
+          nomeArquivo,
+          conteudoArquivo,
+          id: Date.now()
+        };
+        dados.despesas.push(despesa);
+        salvarDados();
+        document.getElementById('despesaDescricaoInput').value = '';
+        document.getElementById('despesaValorInput').value = '';
+        document.getElementById('despesaDataInput').value = new Date().toISOString().split('T')[0];
+        document.getElementById('despesaArquivoInput').value = '';
+        exibirDespesas();
+      };
+      reader.readAsDataURL(arquivo);
+    } else {
+      const despesa = {
+        descricao,
+        valor,
+        data,
+        nomeArquivo: null,
+        conteudoArquivo: null,
+        id: Date.now()
+      };
+      dados.despesas.push(despesa);
+      salvarDados();
+      document.getElementById('despesaDescricaoInput').value = '';
+      document.getElementById('despesaValorInput').value = '';
+      document.getElementById('despesaDataInput').value = new Date().toISOString().split('T')[0];
+      document.getElementById('despesaArquivoInput').value = '';
+      exibirDespesas();
+    }
+  }
+  
+  function exibirDespesas() {
+    const lista = document.getElementById('despesasList');
+    if (dados.despesas.length === 0) {
+      lista.innerHTML = '<p style="color: #999;">Nenhuma despesa registrada</p>';
+      return;
+    }
+    
+    const totalDespesas = dados.despesas.reduce((sum, d) => sum + d.valor, 0);
+    
+    lista.innerHTML = `
+      <div style="padding: 12px; background: #e8f4f8; border-radius: 4px; margin-bottom: 15px; border-left: 4px solid #0066cc;">
+        <strong>Total de Despesas:</strong> R$ ${totalDespesas.toFixed(2)}
+      </div>
+    ` + dados.despesas.map((d, i) => `
+      <div style="padding: 12px; background: #f8f8f8; border-radius: 4px; margin-bottom: 8px; border-left: 4px solid #ff9800;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div style="flex: 1;">
+            <strong>${d.descricao}</strong><br>
+            <span style="color: #666; font-size: 13px;">📅 ${new Date(d.data).toLocaleDateString('pt-BR')}</span><br>
+            <span style="color: #0066cc; font-weight: 600; font-size: 14px;">R$ ${d.valor.toFixed(2)}</span>
+            ${d.nomeArquivo ? `<br><a href="${d.conteudoArquivo}" download="${d.nomeArquivo}" style="color: #0066cc; text-decoration: none; font-size: 12px;">📎 ${d.nomeArquivo}</a>` : ''}
+          </div>
+          <button onclick="removerDespesa(${i})" style="padding: 6px 12px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Remover</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  function removerDespesa(index) {
+    dados.despesas.splice(index, 1);
+    salvarDados();
+    exibirDespesas();
+  }
 </script>
 </body>
 </html>
