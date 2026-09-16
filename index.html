@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Associação Rural Ivoti</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f5; color: #1a1a1a; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    h1 { font-size: 28px; margin-bottom: 5px; }
+    .subtitle { color: #666; font-size: 14px; }
+    
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid #ddd; background: white; border-radius: 8px 8px 0 0; }
+    .tab-btn { padding: 12px 20px; background: white; border: none; cursor: pointer; font-size: 14px; font-weight: 500; color: #666; border-bottom: 3px solid transparent; transition: all 0.2s; }
+    .tab-btn.active { color: #1a1a1a; border-bottom-color: #0066cc; }
+    .tab-btn:hover { color: #1a1a1a; }
+    
+    .content { background: white; border-radius: 0 8px 8px 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .section { display: none; }
+    .section.active { display: block; }
+    
+    .card { background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 12px; }
+    .card-header { font-weight: 600; color: #1a1a1a; margin-bottom: 5px; }
+    .card-meta { font-size: 13px; color: #888; }
+    
+    .btn { padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.2s; }
+    .btn-primary { background: #0066cc; color: white; }
+    .btn-primary:hover { background: #0052a3; }
+    .btn-success { background: #10b981; color: white; }
+    .btn-success:hover { background: #059669; }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-danger:hover { background: #dc2626; }
+    
+    .input-group { margin-bottom: 15px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #1a1a1a; }
+    input, textarea, select { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+    
+    .action-btn { background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px 8px; font-size: 14px; }
+    .action-btn:hover { text-decoration: underline; }
+    
+    .status-bar { display: flex; justify-content: space-between; align-items: center; background: #e8f5e9; padding: 12px; border-radius: 6px; margin-bottom: 15px; }
+    .status-text { color: #2e7d32; font-weight: 600; }
+    
+    .empty { text-align: center; color: #999; padding: 30px 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAQFBQkGCQkJCQkKCAkICgsLCgoLCwwKCwoLCgwMDAwNDQwMDAwMDw4PDAwNDw8PDw0OERERDhEQEBETERMREQ0BBAQECAYIBwgIBwgGCAYICAgHBwgICQcHBwcHCQoJCAgICAkKCQgIBggICQkJCgoJCQoICQgKCgoKCg4QDg4Od//CABEIBCAEmwMBIgACEQED" style="max-width: 200px; height: auto; margin-bottom: 15px;">
+      </div>
+      <h1 style="text-align: center; margin: 0 0 5px;">IVOTI RURAL</h1>
+      <p class="subtitle" style="text-align: center; margin: 0;">Sabores e Experiências</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('membros')">Membros Diretoria</button>
+      <button class="tab-btn" onclick="showTab('ata')">📋 Ata da Reunião</button>
+      <button class="tab-btn" onclick="showTab('documentos')">Arquivos Compartilhados</button>
+      <button class="tab-btn" onclick="showTab('financeiro')">Financeiro</button>
+    </div>
+
+    <div class="content">
+      
+      <!-- TAB ATA -->
+      <div id="ata" class="section">
+        <div style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 15px;">Ata da Reunião</h3>
+          <div class="input-group">
+            <label>Data da reunião</label>
+            <input type="date" id="data-ata">
+          </div>
+          <div class="input-group">
+            <label>Responsável</label>
+            <input type="text" id="responsavel-ata" placeholder="Quem escreveu a ata?">
+          </div>
+          <div class="input-group">
+            <label>Conteúdo da Ata</label>
+            <textarea id="conteudo-ata" placeholder="Digite aqui o conteúdo completo da ata..." style="min-height: 300px;"></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="salvarAta()">💾 Salvar Ata</button>
+        </div>
+
+        <div id="ata-container" style="margin-top: 30px;"></div>
+      </div>
+
+      <!-- TAB MEMBROS -->
+      <div id="membros" class="section active">
+        <div style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 15px;">Adicionar Membro da Diretoria</h3>
+          <div class="form-row">
+            <div class="input-group">
+              <label>Nome completo</label>
+              <input type="text" id="nome-membro" placeholder="Ex: João Silva">
+            </div>
+            <div class="input-group">
+              <label>Cargo</label>
+              <input type="text" id="cargo-membro" placeholder="Ex: Presidente">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="adicionarMembro()">+ Adicionar Membro</button>
+        </div>
+
+        <h3 style="margin-bottom: 15px;">Membros (Total: <span id="total-membros">0</span>/10)</h3>
+        <div id="lista-membros"></div>
+      </div>
+
+      <!-- TAB DOCUMENTOS -->
+      <div id="documentos" class="section">
+        <div style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 15px;">Adicionar Arquivo</h3>
+          <div class="input-group">
+            <label>Título do arquivo</label>
+            <input type="text" id="titulo-doc" placeholder="Ex: Ata da Reunião">
+          </div>
+          <div class="input-group">
+            <label>Descrição</label>
+            <textarea id="desc-doc" placeholder="Descreva o conteúdo..." style="min-height: 80px;"></textarea>
+          </div>
+          <div class="input-group">
+            <label>Categoria</label>
+            <select id="categoria-doc">
+              <option value="ata">Ata de Reunião</option>
+              <option value="financeiro">Financeiro</option>
+              <option value="projeto">Projeto/Planejamento</option>
+              <option value="marketing">Marketing/Divulgação</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="adicionarDocumento()">+ Adicionar Arquivo</button>
+        </div>
+
+        <h3 style="margin-bottom: 15px;">Arquivos Compartilhados</h3>
+        <div id="lista-docs"></div>
+      </div>
+
+      <!-- TAB FINANCEIRO -->
+      <div id="financeiro" class="section">
+        <div class="status-bar">
+          <span class="status-text">Sócios que pagaram: <span id="pagos">0</span> de 10</span>
+          <span style="color: #2e7d32; font-size: 13px;">Mensalidade anual</span>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 15px;">Registrar Pagamento</h3>
+          <div class="form-row">
+            <div class="input-group">
+              <label>Nome do sócio</label>
+              <input type="text" id="nome-socio" placeholder="Ex: Maria Santos">
+            </div>
+            <div class="input-group">
+              <label>Valor (R$)</label>
+              <input type="number" id="valor-pag" placeholder="Ex: 150.00" step="0.01">
+            </div>
+          </div>
+          <button class="btn btn-success" onclick="registrarPagamento()">✓ Registrar Pagamento</button>
+        </div>
+
+        <h3 style="margin-bottom: 15px;">Histórico de Pagamentos</h3>
+        <div id="lista-pagamentos"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://api.github.com/gists';
+    let GIST_ID = localStorage.getItem('gist_id');
+
+    // Estrutura de dados padrão
+    const defaultData = {
+      membros: [],
+      documentos: [],
+      pagamentos: []
+    };
+
+    async function carregarDados() {
+      if (!GIST_ID) return defaultData;
+      
+      try {
+        const response = await fetch(`https://api.github.com/gists/${GIST_ID}`);
+        if (response.ok) {
+          const gist = await response.json();
+          const content = Object.values(gist.files)[0].content;
+          return JSON.parse(content);
+        }
+      } catch (e) {
+        console.log('Usando dados locais');
+      }
+      
+      const local = localStorage.getItem('associacao_data');
+      return local ? JSON.parse(local) : defaultData;
+    }
+
+    async function salvarDados(dados) {
+      localStorage.setItem('associacao_data', JSON.stringify(dados));
+      
+      if (!GIST_ID) {
+        GIST_ID = await criarGist(dados);
+        localStorage.setItem('gist_id', GIST_ID);
+      } else {
+        await atualizarGist(GIST_ID, dados);
+      }
+    }
+
+    async function criarGist(dados) {
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Accept': 'application/vnd.github+json' },
+          body: JSON.stringify({
+            public: false,
+            files: {
+              'associacao-data.json': {
+                content: JSON.stringify(dados, null, 2)
+              }
+            }
+          })
+        });
+        if (response.ok) {
+          const gist = await response.json();
+          return gist.id;
+        }
+      } catch (e) {
+        console.log('Usando apenas localStorage');
+      }
+      return null;
+    }
+
+    async function atualizarGist(id, dados) {
+      try {
+        await fetch(`${API_URL}/${id}`, {
+          method: 'PATCH',
+          headers: { 'Accept': 'application/vnd.github+json' },
+          body: JSON.stringify({
+            files: {
+              'associacao-data.json': {
+                content: JSON.stringify(dados, null, 2)
+              }
+            }
+          })
+        });
+      } catch (e) {
+        console.log('Erro ao sincronizar');
+      }
+    }
+
+    function showTab(tab) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      
+      document.getElementById(tab).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    async function adicionarMembro() {
+      const nome = document.getElementById('nome-membro').value.trim();
+      const cargo = document.getElementById('cargo-membro').value.trim();
+      
+      if (!nome || !cargo) {
+        alert('Preencha nome e cargo');
+        return;
+      }
+
+      const dados = await carregarDados();
+      if (dados.membros.length >= 10) {
+        alert('Limite de 10 membros atingido');
+        return;
+      }
+
+      dados.membros.push({ id: Date.now(), nome, cargo });
+      await salvarDados(dados);
+      
+      document.getElementById('nome-membro').value = '';
+      document.getElementById('cargo-membro').value = '';
+      
+      renderMembros();
+    }
+
+    async function removerMembro(id) {
+      if (!confirm('Remover membro?')) return;
+      
+      const dados = await carregarDados();
+      dados.membros = dados.membros.filter(m => m.id !== id);
+      await salvarDados(dados);
+      renderMembros();
+    }
+
+    async function renderMembros() {
+      const dados = await carregarDados();
+      const list = document.getElementById('lista-membros');
+      
+      document.getElementById('total-membros').textContent = dados.membros.length;
+      
+      if (dados.membros.length === 0) {
+        list.innerHTML = '<p class="empty">Nenhum membro adicionado</p>';
+        return;
+      }
+
+      list.innerHTML = dados.membros.map(m => `
+        <div class="card">
+          <div style="display: flex; justify-content: space-between;">
+            <div>
+              <div class="card-header">${m.nome}</div>
+              <div class="card-meta">Cargo: ${m.cargo}</div>
+            </div>
+            <button class="action-btn" onclick="removerMembro(${m.id})">Remover</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function adicionarDocumento() {
+      const titulo = document.getElementById('titulo-doc').value.trim();
+      const desc = document.getElementById('desc-doc').value.trim();
+      const categoria = document.getElementById('categoria-doc').value;
+      
+      if (!titulo || !desc) {
+        alert('Preencha título e descrição');
+        return;
+      }
+
+      const dados = await carregarDados();
+      dados.documentos.push({
+        id: Date.now(),
+        titulo,
+        desc,
+        categoria,
+        data: new Date().toLocaleDateString('pt-BR')
+      });
+      await salvarDados(dados);
+      
+      document.getElementById('titulo-doc').value = '';
+      document.getElementById('desc-doc').value = '';
+      document.getElementById('categoria-doc').value = 'ata';
+      
+      renderDocumentos();
+    }
+
+    async function removerDocumento(id) {
+      if (!confirm('Remover arquivo?')) return;
+      
+      const dados = await carregarDados();
+      dados.documentos = dados.documentos.filter(d => d.id !== id);
+      await salvarDados(dados);
+      renderDocumentos();
+    }
+
+    async function renderDocumentos() {
+      const dados = await carregarDados();
+      const list = document.getElementById('lista-docs');
+      
+      if (dados.documentos.length === 0) {
+        list.innerHTML = '<p class="empty">Nenhum arquivo compartilhado</p>';
+        return;
+      }
+
+      list.innerHTML = dados.documentos.map(d => `
+        <div class="card">
+          <div style="display: flex; justify-content: space-between;">
+            <div style="flex: 1;">
+              <div class="card-header">${d.titulo}</div>
+              <div class="card-meta">${d.desc}</div>
+              <div class="card-meta" style="margin-top: 8px;">
+                <strong>Categoria:</strong> ${d.categoria} | <strong>Data:</strong> ${d.data}
+              </div>
+            </div>
+            <button class="action-btn" onclick="removerDocumento(${d.id})">Remover</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function registrarPagamento() {
+      const nome = document.getElementById('nome-socio').value.trim();
+      const valor = document.getElementById('valor-pag').value.trim();
+      
+      if (!nome || !valor) {
+        alert('Preencha nome e valor');
+        return;
+      }
+
+      const dados = await carregarDados();
+      
+      const jaPagou = dados.pagamentos.some(p => p.nome.toLowerCase() === nome.toLowerCase());
+      if (jaPagou) {
+        if (!confirm(`${nome} já tem pagamento registrado. Adicionar outro?`)) return;
+      }
+
+      dados.pagamentos.push({
+        id: Date.now(),
+        nome,
+        valor,
+        data: new Date().toLocaleDateString('pt-BR')
+      });
+      await salvarDados(dados);
+      
+      document.getElementById('nome-socio').value = '';
+      document.getElementById('valor-pag').value = '';
+      
+      renderPagamentos();
+    }
+
+    async function removerPagamento(id) {
+      if (!confirm('Remover pagamento?')) return;
+      
+      const dados = await carregarDados();
+      dados.pagamentos = dados.pagamentos.filter(p => p.id !== id);
+      await salvarDados(dados);
+      renderPagamentos();
+    }
+
+    async function renderPagamentos() {
+      const dados = await carregarDados();
+      const list = document.getElementById('lista-pagamentos');
+      
+      document.getElementById('pagos').textContent = dados.pagamentos.length;
+      
+      if (dados.pagamentos.length === 0) {
+        list.innerHTML = '<p class="empty">Nenhum pagamento registrado</p>';
+        return;
+      }
+
+      list.innerHTML = dados.pagamentos.map(p => `
+        <div class="card" style="background: #e8f5e9; border-color: #10b981;">
+          <div style="display: flex; justify-content: space-between;">
+            <div>
+              <div class="card-header" style="color: #10b981;">${p.nome}</div>
+              <div class="card-meta">R$ ${parseFloat(p.valor).toFixed(2)} | ${p.data}</div>
+            </div>
+            <button class="action-btn" onclick="removerPagamento(${p.id})">Remover</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function salvarAta() {
+      const data = document.getElementById('data-ata').value;
+      const responsavel = document.getElementById('responsavel-ata').value.trim();
+      const conteudo = document.getElementById('conteudo-ata').value.trim();
+      
+      if (!data || !responsavel || !conteudo) {
+        alert('Preencha todos os campos da ata');
+        return;
+      }
+
+      const dados = await carregarDados();
+      dados.ata = {
+        data,
+        responsavel,
+        conteudo,
+        dataSalvamento: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR')
+      };
+      await salvarDados(dados);
+      
+      alert('✓ Ata salva com sucesso!');
+      renderAta();
+    }
+
+    async function renderAta() {
+      const dados = await carregarDados();
+      const container = document.getElementById('ata-container');
+      
+      if (!dados.ata) {
+        container.innerHTML = '<p class="empty">Nenhuma ata registrada</p>';
+        return;
+      }
+
+      const ata = dados.ata;
+      container.innerHTML = `
+        <h3 style="margin-bottom: 15px;">Ata Registrada</h3>
+        <div class="card" style="background: #f0f7ff; border-color: #0066cc;">
+          <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <div>
+                <div class="card-header" style="color: #0066cc;">Ata de ${ata.data}</div>
+                <div class="card-meta">Responsável: ${ata.responsavel}</div>
+                <div class="card-meta">Salva em: ${ata.dataSalvamento}</div>
+              </div>
+              <button class="action-btn" onclick="editarAta()">Editar</button>
+            </div>
+          </div>
+          <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0; white-space: pre-wrap; font-family: monospace; font-size: 13px; line-height: 1.6; max-height: 400px; overflow-y: auto;">
+${ata.conteudo}
+          </div>
+        </div>
+      `;
+    }
+
+    async function editarAta() {
+      const dados = await carregarDados();
+      if (!dados.ata) return;
+
+      const ata = dados.ata;
+      document.getElementById('data-ata').value = ata.data;
+      document.getElementById('responsavel-ata').value = ata.responsavel;
+      document.getElementById('conteudo-ata').value = ata.conteudo;
+      
+      // Scroll para o editor
+      document.getElementById('data-ata').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Carregar dados ao iniciar
+    renderMembros();
+    renderAta();
+    renderDocumentos();
+    renderPagamentos();
+  </script>
+</body>
+</html>
